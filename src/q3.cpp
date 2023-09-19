@@ -27,18 +27,26 @@ std::vector<vector_st> monitoring(const std::vector<vector_st>& log, const int m
         auto address = log_line[1];
         auto restime = log_line[2];
         auto itr = over_map.find(address);
-        //サーバーの故障を発見する
+
+        std::cout<<address<<"\n";
+        //サーバーの応答なしを発見する
         if(restime=="-"){
-            //応答時間10000ms以上を故障とした。
+            //10000ms待って応答がなかった場合を応答なしとした
             restime = "10000";
         }
         int restime_int = std::stoi(restime);
+        std::cout<<restime_int<<"\n";
         if(itr == over_map.end()){
-            auto over_tuple = over_map[address];
+            auto& over_tuple = over_map[address];
+            auto& que = std::get<2>(over_tuple);
             std::get<0>(over_tuple) = false;
-            //std::get<1>(over_tuple) = time;
-            std::get<2>(over_tuple).push(restime_int);
+            if(!que.empty()){
+                que.pop();
+            }
+            que.push(restime_int);
             std::get<3>(over_tuple) = restime_int;
+
+            std::cout<<std::get<2>(over_tuple).size()<<"\n";
         }else{
             auto& over_tuple = over_map[address];
             auto& flag = std::get<0>(over_tuple);
@@ -47,25 +55,33 @@ std::vector<vector_st> monitoring(const std::vector<vector_st>& log, const int m
             auto& sum_m = std::get<3>(over_tuple);
             que.push(restime_int);
             sum_m += restime_int;
+
+            std::cout<<que.size()<<"\n";
+
             if(que.size()>m){
                 sum_m -= que.front();
                 que.pop();
             }
-            //サーバーの復帰を確かめる
-            if(flag==true){
-                if(sum_m<t*m){
-                    monitor_.push_back({address, start_time, add_ms(time, std::stoi(restime))});
-                    flag = false;
-                }
-            }else{
-                //過負荷状態になったかを確かめる
-                if(que.size()==m && sum_m >= t*m){
-                    start_time = time;
-                    flag == true;
-                }
+        }
+        auto& over_tuple = over_map[address];
+        auto& flag = std::get<0>(over_tuple);
+        auto& start_time = std::get<1>(over_tuple);
+        auto& que = std::get<2>(over_tuple);
+        auto& sum_m = std::get<3>(over_tuple);
+        //サーバーの復帰を確かめる
+        if(flag==true){
+            if(sum_m<t*m){
+                monitor_.push_back({address, start_time, add_ms(time, std::stoi(restime))});
+                flag = false;
+            }
+        }else{
+            std::cout<<sum_m<<"\n";
+            //過負荷状態になったかを確かめる
+            if(que.size()==m && sum_m >= t*m){
+                start_time = time;
+                flag = true;
             }
         }
-
     }
     //過負荷状態継続中のもの
     for(auto one: over_map){
