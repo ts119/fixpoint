@@ -38,6 +38,17 @@ std::vector<vector_st> monitoring(const std::vector<vector_st>& log, const int N
             error_map.erase(address);
         }
     }
+
+    //サブネットの故障が継続中のもの
+    for(auto error : error_map){
+        auto address = error.first;
+        auto error_time = error.second.first;
+        auto start_time = error.second.second;
+        if(error_time>=N){
+            monitor_.push_back({address, start_time, "now"});
+        }
+    }
+
     return monitor_;
 }
 
@@ -50,9 +61,8 @@ int  main(int argc, char* argv[]){
     File data_log(argv[1]);
     int N = std::stoi(argv[2]);
 
-    std::cout<<N<<"\n";
-
-    data_log.print();
+    //データログを出力
+    //data_log.print();
 
     auto log = data_log.log;
 

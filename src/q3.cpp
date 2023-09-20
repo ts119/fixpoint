@@ -28,14 +28,12 @@ std::vector<vector_st> monitoring(const std::vector<vector_st>& log, const int m
         auto restime = log_line[2];
         auto itr = over_map.find(address);
 
-        std::cout<<address<<"\n";
         //サーバーの応答なしを発見する
         if(restime=="-"){
             //10000ms待って応答がなかった場合を応答なしとした
             restime = "10000";
         }
         int restime_int = std::stoi(restime);
-        std::cout<<restime_int<<"\n";
         if(itr == over_map.end()){
             auto& over_tuple = over_map[address];
             auto& que = std::get<2>(over_tuple);
@@ -45,8 +43,6 @@ std::vector<vector_st> monitoring(const std::vector<vector_st>& log, const int m
             }
             que.push(restime_int);
             std::get<3>(over_tuple) = restime_int;
-
-            std::cout<<std::get<2>(over_tuple).size()<<"\n";
         }else{
             auto& over_tuple = over_map[address];
             auto& flag = std::get<0>(over_tuple);
@@ -55,8 +51,6 @@ std::vector<vector_st> monitoring(const std::vector<vector_st>& log, const int m
             auto& sum_m = std::get<3>(over_tuple);
             que.push(restime_int);
             sum_m += restime_int;
-
-            std::cout<<que.size()<<"\n";
 
             if(que.size()>m){
                 sum_m -= que.front();
@@ -75,7 +69,6 @@ std::vector<vector_st> monitoring(const std::vector<vector_st>& log, const int m
                 flag = false;
             }
         }else{
-            std::cout<<sum_m<<"\n";
             //過負荷状態になったかを確かめる
             if(que.size()==m && sum_m >= t*m){
                 start_time = time;
@@ -105,7 +98,8 @@ int  main(int argc, char* argv[]){
     int m = std::stoi(argv[2]);
     int t = std::stoi(argv[3]);
 
-    data_log.print();
+    //データログを出力
+    //data_log.print();
 
     auto log = data_log.log;
 

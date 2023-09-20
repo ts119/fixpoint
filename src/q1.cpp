@@ -38,7 +38,7 @@ std::vector<vector_st> monitoring(const std::vector<vector_st>& log){
     }
 
     for(auto error : error_map){
-        monitor_.push_back({error.second, error.first, ""});
+        monitor_.push_back({error.first, error.second, "now"});
     }
 
     return monitor_;
@@ -51,7 +51,8 @@ int  main(int argc, char* argv[]){
     }
     File data_log(argv[1]);
 
-    data_log.print();
+    //データログを出力
+    //data_log.print();
 
     auto log = data_log.log;
 
