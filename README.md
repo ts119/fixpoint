@@ -1,5 +1,5 @@
 # fixpoint
-設問1~4についてのコードを'q1.cpp~q4.cpp'+'Date_calc.cpp Date_calc.hpp File.hpp'として実装した。
+設問i(i=1,2,3,4)についてのコードをそれぞれ'qi.cpp(i=1,2,3,4)'+'Date_calc.cpp Date_calc.hpp File.hpp'として実装した。
 ## 実行
 ### 実行環境
 OS 'Ubuntu 20.04.2 LTS (Windows10,WSL2の仮想環境上)'
